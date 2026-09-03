@@ -372,6 +372,116 @@
 
     </div>
 
+    
+    <script>
+        let cards = Array.from(document.querySelectorAll(".card"));
+        let currentIndex = 0;
+        let category = "all";
+
+        cards.forEach(function(card, index) {
+            card.onclick = function() {
+                currentIndex = index;
+                openLightbox();
+            };
+        });
+
+        function openLightbox() {
+            let card = cards[currentIndex];
+            let image = card.querySelector("img");
+
+            document.getElementById("lightboxImage").src = image.src;
+
+            document.getElementById("counter").innerHTML =
+                (currentIndex + 1) + " / " + cards.length;
+
+            document.getElementById("lightbox").classList.add("show");
+        }
+
+        function closeLightbox() {
+            document.getElementById("lightbox").classList.remove("show");
+        }
+
+        function nextImage() {
+            currentIndex++;
+
+            if (currentIndex >= cards.length) {
+                currentIndex = 0;
+            }
+
+            openLightbox();
+        }
+
+        function previousImage() {
+            currentIndex--;
+
+            if (currentIndex < 0) {
+                currentIndex = cards.length - 1;
+            }
+
+            openLightbox();
+        }
+
+        function setCategory(value, button) {
+            category = value;
+
+            document.querySelectorAll(".filter").forEach(function(btn) {
+                btn.classList.remove("active");
+            });
+
+            button.classList.add("active");
+
+            filterImages();
+        }
+
+        function filterImages() {
+            let search =
+                document.getElementById("search").value.toLowerCase();
+
+            let count = 0;
+
+            cards.forEach(function(card) {
+                let title = card.dataset.title.toLowerCase();
+                let cardCategory = card.dataset.category;
+
+                let matchesSearch =
+                    title.includes(search);
+
+                let matchesCategory =
+                    category == "all" ||
+                    cardCategory == category;
+
+                if (matchesSearch && matchesCategory) {
+                    card.style.display = "block";
+                    count++;
+                }
+                else {
+                    card.style.display = "none";
+                }
+            });
+
+            document.getElementById("noResult").style.display =
+                count == 0 ? "block" : "none";
+        }
+
+        document.addEventListener("keydown", function(event) {
+            if (!document.getElementById("lightbox")
+                .classList.contains("show")) {
+                return;
+            }
+
+            if (event.key == "Escape") {
+                closeLightbox();
+            }
+
+            if (event.key == "ArrowRight") {
+                nextImage();
+            }
+
+            if (event.key == "ArrowLeft") {
+                previousImage();
+            }
+        });
+    </script>
 
 </body>
 </html>
